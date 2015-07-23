@@ -7,7 +7,7 @@ Authors: Joel Burton, Christian Fernandez, Meggie Mahnken.
 """
 
 
-from flask import Flask, render_template, redirect, flash, session
+from flask import Flask, request, render_template, make_response, session, flash, redirect, url_for, escape
 import jinja2
 
 import model
@@ -30,6 +30,8 @@ app.jinja_env.undefined = jinja2.StrictUndefined
 @app.route("/")
 def index():
     """Return homepage."""
+    if cart_session not in session:
+        session['cart_session'] = []
     flash("Message flash from homepage")
     return render_template("homepage.html")
 
@@ -73,11 +75,20 @@ def add_to_cart(id):
     When a melon is added to the cart, redirect browser to the shopping cart
     page and display a confirmation message: 'Successfully added to cart'.
     """
-
     # TODO: Finish shopping cart functionality
     #   - use session variables to hold cart list
 
-    return "Oops! This needs to be implemented!"
+    session['id'] = request.form['melon_bought_id']
+
+
+    # if session[id]:
+    #     session[id] += 1
+    # else:
+    #     session[id] = 1
+
+
+
+    return render_template('add_to_cart.html', melon_bought_id=id)
 
 
 @app.route("/login", methods=["GET"])
