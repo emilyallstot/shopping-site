@@ -62,7 +62,7 @@ def shopping_cart():
 
     cart = {}
     current_cart = session.get('cart', [])
-    all_melons_total = 0
+    all_melons_total = 0.00
 
     for melon_id in current_cart:
 
@@ -72,6 +72,7 @@ def shopping_cart():
             melon['qty'] += 1
 
         else:
+            
             melon_data = model.Melon.get_by_id(melon_id)
 
             melon['common_name'] = melon_data.common_name
@@ -79,7 +80,8 @@ def shopping_cart():
             melon['qty'] = 1
 
         print melon['qty']
-        melon['melon_cost'] = melon['unit_cost'] * melon['qty']
+        melon['melon_cost'] = melon['unit_cost'] * melon['qty']*1
+
         print melon['melon_cost']
         print all_melons_total
 
