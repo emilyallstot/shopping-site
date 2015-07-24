@@ -30,9 +30,6 @@ app.jinja_env.undefined = jinja2.StrictUndefined
 @app.route("/")
 def index():
     """Return homepage."""
-    if cart_session not in session:
-        session['cart_session'] = []
-    flash("Message flash from homepage")
     return render_template("homepage.html")
 
 
@@ -53,6 +50,7 @@ def show_melon(id):
     """
 
     melon = model.Melon.get_by_id(id)
+    print type(melon)
     print melon
     return render_template("melon_details.html",
                            display_melon=melon)
@@ -62,11 +60,36 @@ def show_melon(id):
 def shopping_cart():
     """Display content of shopping cart."""
 
-    # TODO: Display the contents of the shopping cart.
-    #   - The cart is a list in session containing melons added
+    cart = {}
+    current_cart = session.get('cart', [])
+    all_melons_total = 0
 
-    return render_template("cart.html")
+    for melon_id in current_cart:
 
+        melon = cart.setdefault(melon_id, {})
+
+        if melon:
+            melon['qty'] += 1
+
+        else:
+            melon_data = model.Melon.get_by_id(melon_id)
+
+            melon['common_name'] = melon_data.common_name
+            melon['unit_cost'] = melon_data.price
+            melon['qty'] = 1
+
+        print melon['qty']
+        melon['melon_cost'] = melon['unit_cost'] * melon['qty']
+        print melon['melon_cost']
+        print all_melons_total
+
+        all_melons_total += melon['unit_cost']
+        print all_melons_total
+
+    # Now, get a list of the all melons we've put into that dict
+    cart = cart.values()
+
+    return render_template("cart.html", cart=cart, order_total=all_melons_total)
 
 @app.route("/add_to_cart/<int:id>")
 def add_to_cart(id):
@@ -75,20 +98,16 @@ def add_to_cart(id):
     When a melon is added to the cart, redirect browser to the shopping cart
     page and display a confirmation message: 'Successfully added to cart'.
     """
-    # TODO: Finish shopping cart functionality
-    #   - use session variables to hold cart list
 
-    session['id'] = request.form['melon_bought_id']
+    cart = session.setdefault('cart', [])
 
+    cart.append(id)
 
-    # if session[id]:
-    #     session[id] += 1
-    # else:
-    #     session[id] = 1
+    melon = model.Melon.get_by_id(id)
+    print melon.common_name     
 
-
-
-    return render_template('add_to_cart.html', melon_bought_id=id)
+    flash("Successfully added to cart!")
+    return redirect('/cart')
 
 
 @app.route("/login", methods=["GET"])

@@ -14,11 +14,11 @@
             <div class="well">
                 <h3>Price per melon</h3>
                 <p> {{ display_melon.price_str() }} </p>
-                <!--
-                <a class="btn btn-primary" href="/add_to_cart/{{ display_melon.id }}">
-                -->    
+                
+                <!-- <a class="btn btn-primary" href="/add_to_cart/{{ display_melon.id }}">
+                -->
                 <form action="/add_to_cart/{{ display_melon.id }}">
-                    <input type="submit" value="Add to Cart" name="melon_bought_id" method="POST">
+                    <input type="submit"  class="btn btn-primary" value="Add to Cart" name="melon_bought_id" method="POST">
                 </form>
                 </a>
             </div>
